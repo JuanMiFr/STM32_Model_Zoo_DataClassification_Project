@@ -1,6 +1,5 @@
 # STM32_Model_Zoo_DataClassification_Project
-
-
+```mermaid
 graph TD
     A[Entraînement PyTorch - 5 epochs] --> B[MobileNetV2 α=0.25 + CIFAR-100]
     B --> C[Précision: 55%]
@@ -21,12 +20,5 @@ graph TD
     
     L --> N[Déploiement STM32F767ZI]
     M --> N
-
-
-graph TD
-    A[Capteur LoRa MKR WAN 1310] --> B[Passerelle TTN]
-    B --> C[Webhook Flask personnalisé]
-    C --> D[Base de données SQL]
-    C --> E[CSV local]
-    D --> F[App Android via API]
+```
     
