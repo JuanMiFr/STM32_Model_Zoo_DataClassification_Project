@@ -21,4 +21,14 @@ graph TD
     L --> N[Déploiement STM32F767ZI]
     M --> N
 ```
-    
+```mermaid    
+flowchart LR
+    A[PyTorch<br>55%] --> B[ONNX]
+    B --> C{PTQ}
+    C --> D[ST Toolchain<br>10 images]
+    C --> E[Colab<br>>100 images]
+    D --> F[16%]
+    E --> G[36%]
+    F --> H[STM32]
+    G --> H
+```
