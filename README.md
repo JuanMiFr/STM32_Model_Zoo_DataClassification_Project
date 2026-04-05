@@ -21,3 +21,12 @@ graph TD
     
     L --> N[Déploiement STM32F767ZI]
     M --> N
+
+
+graph TD
+    A[Capteur LoRa MKR WAN 1310] --> B[Passerelle TTN]
+    B --> C[Webhook Flask personnalisé]
+    C --> D[Base de données SQL]
+    C --> E[CSV local]
+    D --> F[App Android via API]
+    
