@@ -1,0 +1,9 @@
+bsp/
+Debug/
+Release/
+build/
+*.elf
+*.bin
+*.hex
+*.map
+.metadata/
