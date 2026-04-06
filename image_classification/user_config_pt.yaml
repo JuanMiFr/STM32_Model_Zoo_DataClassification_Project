@@ -1,0 +1,201 @@
+general:
+  display_figures: false
+
+model:
+  framework: 'torch' # Must have
+  model_name: 'mobilenet_a025_pt' 
+  model_path: C:\Users\juanm\Documents\Documents\Canada\SessionHiver2026\Sys800\projet\modelesonnx\mobilenet_a025_70p\mobilenet_a025_pt_int8.onnx #./pt/src/experiments_outputs/2026_04_05_15_06_57_70p/saved_models/mobilenet_a025_pt/mobilenet_a025_pt.onnx
+  pretrained: true
+  pretrained_dataset: "imagenet"
+  input_shape: [3, 224, 224]
+
+operation_mode: benchmarking #chain_eqe #chain_tqe
+
+dataset:
+  dataset_name: cifar100
+  class_names: ./datasets/labels_cifar100.txt
+  #classes_file_path: ./datasets/labels_cifar100.txt
+  training_path: ./datasets/cifar100/train       # dossier contenant les images d'entraînement
+  test_path: ./datasets/cifar100/test      # dossier contenant les images de validation
+  num_classes: 100 # change according to your dataset
+  data_dir: ./datasets/cifar100
+  train_split: "train"
+  val_split: "validation"
+  quantization_path: ./datasets/cifar100
+  quantization_split: 0.4
+  # test_path: you can provide path to test data and it will be used for validation
+  
+  workers: 4
+  no_prefetcher: true
+
+quantization:
+   quantizer: Onnx_quantizer
+   quantization_type: PTQ
+   quantization_input_type: uint8
+   quantization_output_type: float
+   export_dir: quantized_models
+   onnx_quant_parameters: # Optional, only applies to Onnx_quantizer
+   onnx_extra_options:  # Optional, only applies to Onnx_quantizer
+   iterative_quant_parameters: # Optional, only applies to Onnx_quantizer
+
+
+
+
+# dataset:
+#   dataset_name: cifar100 # options "flowers102", "food101", "imagenet"
+#   class_names: [
+#     'apple', 'aquarium_fish', 'baby', 'bear', 'beaver', 'bed', 'bee', 'beetle',
+#     'bicycle', 'bottle', 'bowl', 'boy', 'bridge', 'bus', 'butterfly', 'camel',
+#     'can', 'castle', 'caterpillar', 'cattle', 'chair', 'chimpanzee', 'clock',
+#     'cloud', 'cockroach', 'couch', 'crab', 'crocodile', 'cup', 'dinosaur',
+#     'dolphin', 'elephant', 'flatfish', 'forest', 'fox', 'girl', 'hamster',
+#     'house', 'kangaroo', 'keyboard', 'lamp', 'lawn_mower', 'leopard', 'lion',
+#     'lizard', 'lobster', 'man', 'maple_tree', 'motorcycle', 'mountain', 'mouse',
+#     'mushroom', 'oak_tree', 'orange', 'orchid', 'otter', 'palm_tree', 'pear',
+#     'pickup_truck', 'pine_tree', 'plain', 'plate', 'poppy', 'porcupine',
+#     'possum', 'rabbit', 'raccoon', 'ray', 'road', 'rocket', 'rose', 'sea',
+#     'seal', 'spython stm32ai_main.pyhark', 'shrew', 'skunk', 'skyscraper', 'snail', 'snake', 'spider',
+#     'squirrel', 'streetcar', 'sunflower', 'sweet_pepper', 'table', 'tank',
+#     'telephone', 'television', 'tiger', 'tractor', 'train', 'trout', 'tulip',
+#     'turtle', 'wardrobe', 'whale', 'willow_tree', 'wolf', 'woman', 'worm'] # how is class_names used, torch especially imagenet requires a dict called class_map
+#   classes_file_path: ./datasets/labels_cifar100.txt
+#   training_path: ./datasets/cifar100/train       # dossier contenant les images d'entraînement
+#   validation_path: ./datasets/cifar100/val      # dossier contenant les images de validation
+#   num_classes: 100 # change according to your dataset
+#   data_dir: 'local/datasets/cifar100' # provide root folder which cotnains imagenet folder and this can also be used for quantization as a fall back
+#   #train_split: "train" # folder name under root (for imagenet) Optional for standard imagenet
+#   #val_split: "validation" # folder name under root (for imagenet) Optional for standard imagenet
+#   #test_path: '/local/datasets/ic_imagenet_2012/val/'
+#   #quantization_path: '/local/datasets/ic_imagenet_2012/val/'
+#   #prediction_path: '/local/datasets/ic_imagenet_2012/n01440764/'
+#   workers: 4
+#   worker_seeding: all
+#   pin_mem: true
+#   no_prefetcher: true
+#   use_multi_epochs_loader: false
+   
+preprocessing: 
+  rescaling: # Not used for Torch Image Classification
+    scale: None # Not used for Torch Image Classification
+    offset: None # Not used for Torch Image Classification
+  resizing:
+    interpolation: random # 'random' means random.choice(["bilinear", "bicubic"]). This will be used for training data and bilinear is fixed for test data 
+    aspect_ratio: fit # fit is the only aspect_ratio supported for torch image classification.
+  color_mode: rgb # rgb is the only color_mode supported  for torch image classification.
+  normalization:
+    #mean: [0.5071, 0.4867, 0.4408]
+    #std: [0.2675, 0.2565, 0.2761]
+    #d'origine il y avait ces valeurs pour imagenet, je les ai remplacé par celles de cifar100 https://www.kaggle.com/code/ashishpatel26/cifar-100-image-classification-using-pytorch/notebook
+     mean: [0.485, 0.456, 0.406] # Subtracted from each channel: (x - mean) / std
+     std: [0.229, 0.224, 0.225] # Divides each channel after mean subtraction
+
+data_augmentation:
+  no_aug: False  
+  crop_range: [0.08, 1.0]
+  ratio: [0.75, 1.33]
+  horizontal_flip: 0.5
+  vertical_flip: 0.0
+  hflip: 0.5
+  vflip: 0.0
+  color_jitter: 0.4
+  aa: null 
+  aug_repeats: 0
+  aug_splits: 0
+  jsd_loss: False
+  bce_loss: False
+  bce_target_thresh: null
+  reprob: 0 
+  remode: 'pixel' 
+  recount: 1 
+  resplit: False  
+  mixup: 0.0
+  cutmix: 0.0
+  cutmix_minmax: null  # Example: [0.3, 0.8]
+  mixup_prob: 1.0
+  mixup_switch_prob: 0.5
+  mixup_mode: "batch"
+  smoothing: 0.1
+  drop: 0.0
+  drop_connect: null
+  drop_path: null
+  drop_block: null
+
+training:
+  epochs: 3
+  batch_size: 256
+  validation_batch_size: null
+  optimizer:
+    opt: 'sgd' 
+    opt-eps: null 
+    opt-betas: null 
+    momentum: 0.9
+    weight_decay: 0.00002
+    clip_grad: null
+    clip_mode: 'norm'
+    layer_decay: null
+  lr_scheduler:
+    sched: 'cosine'
+    sched_on_updates: False
+    lr: null
+    lr_base: 0.1
+    lr_base_size: 256
+    lr_base_scale: ''
+    lr_noise: null
+    lr_noise_pct: 0.67
+    lr_noise_std: 1.0
+    lr_cycle_mul: 1.0
+    lr_cycle_decay: 0.5
+    lr_cycle_limit: 1
+    lr_k_decay: 1.0
+    warmup_lr: 0.00001
+    min_lr: 0
+    epoch_repeats: 0
+    start_epoch: 0
+    decay_milestones: [90, 180, 270]
+    decay_epochs: 90 
+    warmup_epochs: 5
+    warmup_prefix: False
+    cooldown_epochs: 0
+    patience_epochs: 10
+    decay_rate: 0.1
+  bn_momentum: null
+  bn_eps: null
+  sync_bn: false
+  dist_bn: "reduce"
+  split_bn: false
+  model_ema: false
+  model_ema_force_cpu: false
+  model_ema_decay: 0.9998
+  log_wandb: false
+  log_tb: false
+  log_interval: 50
+  recovery_interval: 0
+  checkpoint_hist: 10
+  save_images: False
+  amp: false
+  amp_dtype: "float16"
+  amp_impl: "native"
+  tta: 0
+  eval_metric: "top1"
+  no_ddp_bb: false
+  synchronize_step: false
+
+
+   
+
+tools:
+   stedgeai:
+      optimization: RAM #balancedC:\ST\STM32Cube AI Studio\STM32Cube-AI-Studio
+      on_cloud: False # d'origine c'est trou j'ai changé pour faire les tests en local
+      path_to_stedgeai: C:/ST/STEdgeAI/4.0/Utilities/windows/stedgeai.exe
+   path_to_cubeIDE: C:/ST/STM32CubeIDE_<2.1.1>/STM32CubeIDE/stm32cubeide.exe
+   
+benchmarking:
+   board: STM32F767ZI #STM32H747I-DISCO
+
+mlflow:
+  uri: ./pt/src/experiments_outputs/mlruns
+
+hydra:
+  run:
+    dir: ./pt/src/experiments_outputs/${now:%Y_%m_%d_%H_%M_%S}
